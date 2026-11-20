@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.matrix_base</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='integration']" position="inside">
+                <div class="col-12 col-lg-6 o_setting_box" id="matrix_connection">
+                    <div class="o_setting_right_pane">
+                        <span class="o_form_label">Matrix</span>
+                        <div class="text-muted">
+                            Conexión para enviar mensajes a salas de Matrix sin cifrar.
+                            Indique un access token, o bien usuario y contraseña.
+                        </div>
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="matrix_homeserver" class="col-lg-4 o_light_label"/>
+                                <field name="matrix_homeserver" placeholder="https://matrix.example.org"/>
+                            </div>
+                            <div class="row">
+                                <label for="matrix_access_token" class="col-lg-4 o_light_label"/>
+                                <field name="matrix_access_token" password="True"/>
+                            </div>
+                            <div class="row">
+                                <label for="matrix_user" class="col-lg-4 o_light_label"/>
+                                <field name="matrix_user" placeholder="@odoo:matrix.example.org"/>
+                            </div>
+                            <div class="row">
+                                <label for="matrix_password" class="col-lg-4 o_light_label"/>
+                                <field name="matrix_password" password="True"/>
+                            </div>
+                            <div class="mt8">
+                                <button name="action_matrix_test_connection" type="object" class="btn-link"
+                                        icon="fa-plug" string="Probar conexión"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

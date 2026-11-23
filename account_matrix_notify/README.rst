@@ -10,14 +10,15 @@ Mensaje
 
 ::
 
-    Concello de Touro                                 ← cliente (empresa)
-    INV/2026/0222                                     ← número (enlaza a la factura)
+    facturado                                         ← tipo (facturado, rectificativa…)
     SO1407                                            ← pedido(s) de venta vinculados
+    INV/2026/0222                                     ← número de factura
     FEV - GRC Xunta 2026_Touro - Concello de Touro    ← cuenta(s) analítica(s)
 
 * Pedido: de las líneas de venta vinculadas si ``sale`` está instalado; si no, el *Origen*.
 * Proyecto: cuentas analíticas de la distribución analítica de las líneas, con su
-  nombre completo (``nombre - cliente``).
+  nombre completo (``nombre - cliente``). Si no hay, se muestra el cliente.
+* Texto plano, sin enlace: así los clientes de Matrix no generan vista previa.
 * Si hay varios se separan por comas; las líneas vacías se omiten.
 * Personalizable sobrescribiendo ``account.move._matrix_message_lines()``.
 

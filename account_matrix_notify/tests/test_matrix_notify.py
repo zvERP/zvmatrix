@@ -49,21 +49,21 @@ class TestMatrixNotify(MatrixTestMixin, AccountTestInvoicingCommon):
         self.assertEqual(
             queue[0]["body"].split("\n"),
             [
-                self.partner_a.name,
-                invoice.name,
+                "facturado",
                 "SO1407",
+                invoice.name,
                 "FEV - GRC Xunta 2026_Touro - %s" % self.partner_a.name,
             ],
         )
-        self.assertIn('<a href="', queue[0]["html"])
-        self.assertIn("model=account.move", queue[0]["html"])
+        self.assertFalse(queue[0]["html"])
 
     def test_empty_lines_skipped(self):
         invoice = self._invoice(analytic=False)
         invoice.invoice_origin = False
         invoice.action_post()
         self.assertEqual(
-            self._matrix_queue()[0]["body"].split("\n"), [self.partner_a.name, invoice.name]
+            self._matrix_queue()[0]["body"].split("\n"),
+            ["facturado", invoice.name, self.partner_a.name],
         )
 
     def test_move_types(self):

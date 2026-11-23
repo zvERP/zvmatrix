@@ -1,5 +1,3 @@
-from html import escape
-
 from odoo import models
 
 
@@ -49,32 +47,38 @@ class AccountMove(models.Model):
         accounts = self.env["account.analytic.account"].browse(account_ids).exists()
         return ", ".join(accounts.mapped("display_name"))
 
+    def _matrix_action_label(self):
+        """Primera línea del mensaje según el tipo de factura."""
+        self.ensure_one()
+        return {
+            "out_invoice": "facturado",
+            "out_refund": "rectificativa",
+            "in_invoice": "factura de proveedor",
+            "in_refund": "rectificativa de proveedor",
+        }.get(self.move_type, "facturado")
+
     def _matrix_message_lines(self):
         """Líneas del mensaje, en orden. Sobrescribir para personalizar.
 
-        Las líneas vacías se omiten.
+        Las líneas vacías se omiten. Si la factura no tiene proyecto se muestra
+        el cliente (el nombre del proyecto ya incluye el cliente).
         """
         self.ensure_one()
         return [
-            self.partner_id.commercial_partner_id.display_name or "",
-            self.name,
+            self._matrix_action_label(),
             self._matrix_sale_orders(),
-            self._matrix_projects(),
+            self.name,
+            self._matrix_projects()
+            or self.partner_id.commercial_partner_id.display_name
+            or "",
         ]
 
-    def _matrix_url(self):
-        self.ensure_one()
-        return "{}/web#id={}&model=account.move&view_type=form".format(
-            self.get_base_url(), self.id
-        )
-
     def _matrix_message(self):
-        """Devuelve (texto plano, HTML). En HTML el número enlaza a la factura."""
+        """Devuelve (texto plano, HTML).
+
+        Sin enlaces a propósito: los clientes de Matrix generan una vista previa
+        del enlace que ocupa más que el propio mensaje.
+        """
         self.ensure_one()
-        lines = [line for line in self._matrix_message_lines() if line]
-        body = "\n".join(lines)
-        link = '<a href="{}">{}</a>'.format(escape(self._matrix_url()), escape(self.name))
-        html = "<br/>".join(
-            link if line == self.name else escape(line) for line in lines
-        )
-        return body, html
+        body = "\n".join(line for line in self._matrix_message_lines() if line)
+        return body, None
